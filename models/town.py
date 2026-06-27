@@ -1,6 +1,6 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
-from .entities import NpcModel
+from .entities import CollectibleModel, NpcModel
 from .terrain import TerrainTile
 
 
@@ -10,7 +10,8 @@ class TownModel:
     start: tuple[int, int]
     goal: tuple[int, int]
     seed: int
-    npcs: list[NpcModel]
+    npcs: list[NpcModel] = field(default_factory=list)
+    collectibles: list[CollectibleModel] = field(default_factory=list)
 
     @property
     def width(self) -> int:
@@ -28,3 +29,10 @@ class TownModel:
 
     def is_walkable(self, x: int, y: int) -> bool:
         return self.in_bounds(x, y) and self.tile_at(x, y).walkable
+
+    def collect_at(self, x: int, y: int) -> bool:
+        for index, item in enumerate(self.collectibles):
+            if item.x == x and item.y == y:
+                self.collectibles.pop(index)
+                return True
+        return False

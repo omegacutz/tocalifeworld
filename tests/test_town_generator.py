@@ -65,3 +65,4 @@ def test_town_generator_seed_is_reproducible(seed):
 
     assert names_a == names_b
     assert [(npc.x, npc.y) for npc in town_a.npcs] == [(npc.x, npc.y) for npc in town_b.npcs]
+    assert [(item.x, item.y) for item in town_a.collectibles] == [(item.x, item.y) for item in town_b.collectibles]

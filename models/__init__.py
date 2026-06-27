@@ -1,4 +1,4 @@
-from .entities import NpcModel, PlayerModel
+from .entities import CollectibleModel, NpcModel, PlayerModel
 from .terrain import BUILDING_TILE, GOAL_TILE, GRASS_TILE, ROAD_TILE, START_TILE, TREE_TILE, TerrainTile
 from .town import TownModel
 
@@ -12,5 +12,6 @@ __all__ = [
     "GOAL_TILE",
     "PlayerModel",
     "NpcModel",
+    "CollectibleModel",
     "TownModel",
 ]
