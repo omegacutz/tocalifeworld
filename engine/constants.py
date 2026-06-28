@@ -24,3 +24,6 @@ HIGH_SCORE_FILE = "high_score.json"
 
 NPC_MOVE_INTERVAL_MS = 420
 NPC_MOVE_CHANCE = 0.65
+
+# Render movement in tenths of a tile so motion feels smooth instead of snapping.
+SUB_TILE_STEPS = 10

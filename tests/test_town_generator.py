@@ -4,7 +4,6 @@ import pytest
 
 from engine.town_generator import TownGenerator
 
-
 SCENARIOS = [
     {"width": 18, "height": 12, "seed": 1111},
     {"width": 24, "height": 16, "seed": 2222},
@@ -64,5 +63,9 @@ def test_town_generator_seed_is_reproducible(seed):
     names_b = [[tile.name for tile in row] for row in town_b.grid]
 
     assert names_a == names_b
-    assert [(npc.x, npc.y) for npc in town_a.npcs] == [(npc.x, npc.y) for npc in town_b.npcs]
-    assert [(item.x, item.y) for item in town_a.collectibles] == [(item.x, item.y) for item in town_b.collectibles]
+    assert [(npc.x, npc.y) for npc in town_a.npcs] == [
+        (npc.x, npc.y) for npc in town_b.npcs
+    ]
+    assert [(item.x, item.y) for item in town_a.collectibles] == [
+        (item.x, item.y) for item in town_b.collectibles
+    ]

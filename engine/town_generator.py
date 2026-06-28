@@ -1,18 +1,54 @@
 import random
 
-from models.entities import CollectibleModel, NpcModel
-from models.terrain import BUILDING_TILE, GOAL_TILE, GRASS_TILE, ROAD_TILE, START_TILE, TREE_TILE
+from models.entities import CollectibleModel
+from models.terrain import (
+    BUILDING_TILE,
+    GOAL_TILE,
+    GRASS_TILE,
+    ROAD_TILE,
+    START_TILE,
+    TREE_TILE,
+)
 from models.town import TownModel
 
 from .constants import BUILDING_CHANCE, GRID_H, GRID_W, TREE_CHANCE
+from .npc import NpcPlacementEngine
 
 
 class TownGenerator:
+    """Create seeded procedural towns with roads, actors, and collectibles.
+
+    Args:
+        None.
+
+    Returns:
+        None.
+    """
+
     def __init__(self, width: int = GRID_W, height: int = GRID_H):
+        """Set the map dimensions used by subsequent town generations.
+
+        Args:
+            width: Map width in tiles.
+            height: Map height in tiles.
+
+        Returns:
+            None.
+        """
         self.width = width
         self.height = height
+        self.npc_placement_engine = NpcPlacementEngine()
 
     def _neighbor_steps(self, x: int, y: int) -> list[tuple[int, int, int, int]]:
+        """Return randomized two-step maze neighbors and their linking wall cells.
+
+        Args:
+            x: Current cell x coordinate.
+            y: Current cell y coordinate.
+
+        Returns:
+            list[tuple[int, int, int, int]]: Candidate next cell and wall-link tuples.
+        """
         steps = [
             (x + 2, y, x + 1, y),
             (x - 2, y, x - 1, y),
@@ -22,7 +58,18 @@ class TownGenerator:
         random.shuffle(steps)
         return steps
 
-    def generate_maze_roads(self, start: tuple[int, int], goal: tuple[int, int]) -> set[tuple[int, int]]:
+    def generate_maze_roads(
+        self, start: tuple[int, int], goal: tuple[int, int]
+    ) -> set[tuple[int, int]]:
+        """Carve a DFS maze road network and ensure connectivity to the goal tile.
+
+        Args:
+            start: Starting tile coordinate.
+            goal: Goal tile coordinate.
+
+        Returns:
+            set[tuple[int, int]]: Walkable road tile coordinates.
+        """
         roads: set[tuple[int, int]] = set()
         visited: set[tuple[int, int]] = set()
         stack: list[tuple[int, int]] = [start]
@@ -64,7 +111,18 @@ class TownGenerator:
 
         return roads
 
-    def carve_extra_openings(self, roads: set[tuple[int, int]], difficulty: int) -> set[tuple[int, int]]:
+    def carve_extra_openings(
+        self, roads: set[tuple[int, int]], difficulty: int
+    ) -> set[tuple[int, int]]:
+        """Add optional shortcuts to roads so lower difficulties are easier to navigate.
+
+        Args:
+            roads: Existing road tile coordinates.
+            difficulty: Difficulty level from 0 to 100.
+
+        Returns:
+            set[tuple[int, int]]: Updated road tile coordinates.
+        """
         # Lower difficulty means more openings, fewer dead ends, and easier navigation.
         difficulty = max(0, min(100, difficulty))
         openness_ratio = (100 - difficulty) / 100.0
@@ -92,6 +150,15 @@ class TownGenerator:
         return roads
 
     def build_town(self, seed_value: int, difficulty: int = 50) -> TownModel:
+        """Build a full town model deterministically from seed and difficulty inputs.
+
+        Args:
+            seed_value: Seed for deterministic generation.
+            difficulty: Difficulty level from 0 to 100.
+
+        Returns:
+            TownModel: Generated town with tiles, NPCs, and collectibles.
+        """
         random.seed(seed_value)
 
         grid = [[GRASS_TILE for _ in range(self.width)] for _ in range(self.height)]
@@ -129,24 +196,13 @@ class TownGenerator:
         grid[sy][sx] = START_TILE
         grid[gy][gx] = GOAL_TILE
 
-        walkable = [(x, y) for y in range(self.height) for x in range(self.width) if grid[y][x].walkable]
-        random.shuffle(walkable)
-        npc_count = min(16, max(6, len(walkable) // 12))
-
-        npc_hat_palette = [
-            (52, 73, 94),
-            (120, 66, 18),
-            (17, 122, 101),
-            (146, 43, 33),
+        walkable = [
+            (x, y)
+            for y in range(self.height)
+            for x in range(self.width)
+            if grid[y][x].walkable
         ]
-        npcs: list[NpcModel] = []
-        for nx, ny in walkable:
-            if (nx, ny) in (start, goal):
-                continue
-            hat_color = random.choice(npc_hat_palette) if random.random() < 0.6 else None
-            npcs.append(NpcModel(x=nx, y=ny, hat_color=hat_color))
-            if len(npcs) >= npc_count:
-                break
+        npcs = self.npc_placement_engine.build_npcs(walkable, start, goal)
 
         npc_positions = {(npc.x, npc.y) for npc in npcs}
         collectible_candidates = [
@@ -157,7 +213,10 @@ class TownGenerator:
         random.shuffle(collectible_candidates)
 
         collectible_count = min(24, max(10, len(walkable) // 10))
-        collectibles = [CollectibleModel(x, y) for x, y in collectible_candidates[:collectible_count]]
+        collectibles = [
+            CollectibleModel(x, y)
+            for x, y in collectible_candidates[:collectible_count]
+        ]
 
         return TownModel(
             grid=grid,

@@ -5,3 +5,8 @@ build/
 dist/
 *.spec
 *.pyc
+
+# Keep AI/session interaction artifacts out of project history.
+logging/
+TEAM_STYLE_GUIDE.md
+SESSION_BOOTSTRAP.md

@@ -2,7 +2,6 @@ import pytest
 
 from engine.rumsfeld import rumsfeld_pass
 
-
 RUMSFELD_SCENARIOS = [
     {
         "name": "normal_lists",
@@ -21,7 +20,9 @@ RUMSFELD_SCENARIOS = [
 ]
 
 
-@pytest.mark.parametrize("scenario", RUMSFELD_SCENARIOS, ids=[s["name"] for s in RUMSFELD_SCENARIOS])
+@pytest.mark.parametrize(
+    "scenario", RUMSFELD_SCENARIOS, ids=[s["name"] for s in RUMSFELD_SCENARIOS]
+)
 def test_rumsfeld_pass_datum_scenarios(scenario):
     result = rumsfeld_pass(
         known_knowns=scenario["known_knowns"],
