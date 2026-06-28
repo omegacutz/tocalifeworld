@@ -39,6 +39,9 @@ class GameConfig:
     npc_move_chance = NPC_MOVE_CHANCE
     avatar_idle_interval_ms = 280
     avatar_contact_slowdown_ms = 120
+    hud_right_margin_px = 12
+    hud_version_row_y = 36
+    hud_win_row_y = 58
 
     @classmethod
     def initialize(cls) -> None:
@@ -90,6 +93,10 @@ class GameConfig:
             return
 
         default_ini = (
+            "[display]\n"
+            "hud_right_margin_px = 12\n"
+            "hud_version_row_y = 36\n"
+            "hud_win_row_y = 58\n\n"
             "[gameplay]\n"
             "initial_difficulty = 55\n"
             "initial_wind_speed = 35\n"
@@ -127,6 +134,30 @@ class GameConfig:
 
         cls.initial_difficulty = cls._get_int(
             parser, "gameplay", "initial_difficulty", cls.initial_difficulty, 0, 100
+        )
+        cls.hud_right_margin_px = cls._get_int(
+            parser,
+            "display",
+            "hud_right_margin_px",
+            cls.hud_right_margin_px,
+            0,
+            300,
+        )
+        cls.hud_version_row_y = cls._get_int(
+            parser,
+            "display",
+            "hud_version_row_y",
+            cls.hud_version_row_y,
+            0,
+            300,
+        )
+        cls.hud_win_row_y = cls._get_int(
+            parser,
+            "display",
+            "hud_win_row_y",
+            cls.hud_win_row_y,
+            0,
+            300,
         )
         cls.initial_wind_speed = cls._get_int(
             parser, "gameplay", "initial_wind_speed", cls.initial_wind_speed, 0, 100

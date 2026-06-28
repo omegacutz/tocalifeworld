@@ -73,6 +73,9 @@ class TownRenderer:
         game_started: bool,
         player_render_position: tuple[float, float],
         npc_render_positions: dict[int, tuple[float, float]],
+        hud_right_margin_px: int,
+        hud_version_row_y: int,
+        hud_win_row_y: int,
     ) -> None:
         """Render one complete frame including map, actors, collectibles, and UI.
 
@@ -95,6 +98,9 @@ class TownRenderer:
             game_started: Whether gameplay has started.
             player_render_position: Interpolated player render position.
             npc_render_positions: Interpolated NPC render positions by id.
+            hud_right_margin_px: Right margin for right-aligned HUD status labels.
+            hud_version_row_y: Vertical row for the version label.
+            hud_win_row_y: Vertical row for the win/status label.
 
         Returns:
             None.
@@ -152,6 +158,9 @@ class TownRenderer:
             wind_slider_track_rect=wind_slider_track_rect,
             difficulty=difficulty,
             difficulty_slider_track_rect=difficulty_slider_track_rect,
+            hud_right_margin_px=hud_right_margin_px,
+            hud_version_row_y=hud_version_row_y,
+            hud_win_row_y=hud_win_row_y,
         )
 
         if not game_started:

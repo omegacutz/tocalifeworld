@@ -117,6 +117,10 @@ class GameEngine:
         self.npc_movement.move_interval_ms = GameConfig.npc_move_interval_ms
         self.npc_movement.move_chance = GameConfig.npc_move_chance
 
+        self.hud_right_margin_px = GameConfig.hud_right_margin_px
+        self.hud_version_row_y = GameConfig.hud_version_row_y
+        self.hud_win_row_y = GameConfig.hud_win_row_y
+
         if self.active_slider is None:
             self.wind_speed = GameConfig.initial_wind_speed
 
@@ -475,6 +479,9 @@ class GameEngine:
                 self.game_started,
                 self.avatar_movement.render_position,
                 self.npc_movement.render_positions,
+                self.hud_right_margin_px,
+                self.hud_version_row_y,
+                self.hud_win_row_y,
             )
             pygame.display.flip()
             self.clock.tick(FPS)

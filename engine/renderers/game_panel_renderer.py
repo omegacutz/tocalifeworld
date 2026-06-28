@@ -41,6 +41,9 @@ class GamePanelRenderer:
         wind_slider_track_rect: pygame.Rect,
         difficulty: int,
         difficulty_slider_track_rect: pygame.Rect,
+        hud_right_margin_px: int,
+        hud_version_row_y: int,
+        hud_win_row_y: int,
     ) -> None:
         """Draw all fixed HUD panel elements above the world viewport.
 
@@ -60,6 +63,9 @@ class GamePanelRenderer:
             wind_slider_track_rect: Wind slider track rectangle.
             difficulty: Difficulty slider value from 0 to 100.
             difficulty_slider_track_rect: Difficulty slider track rectangle.
+            hud_right_margin_px: Right margin for right-aligned status labels.
+            hud_version_row_y: Vertical row for version text.
+            hud_win_row_y: Vertical row for win/status text.
 
         Returns:
             None.
@@ -91,13 +97,17 @@ class GamePanelRenderer:
         self.draw_difficulty_slider(surface, difficulty, difficulty_slider_track_rect)
 
         version_text = self.font.render(f"Version: {version_label}", True, TEXT_COLOR)
-        surface.blit(version_text, (620, 88))
+        version_x = max(
+            0, surface.get_width() - version_text.get_width() - hud_right_margin_px
+        )
+        surface.blit(version_text, (version_x, hud_version_row_y))
 
         if won:
             win_text = self.font.render(
                 "Reached B! Finish under 120s for +100 bonus.", True, TEXT_COLOR
             )
-            surface.blit(win_text, (620, 110))
+            win_x = max(0, surface.get_width() - win_text.get_width() - hud_right_margin_px)
+            surface.blit(win_text, (win_x, hud_win_row_y))
 
     def draw_wind_slider(
         self, surface: pygame.Surface, wind_speed: int, slider_track_rect: pygame.Rect
